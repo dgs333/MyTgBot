@@ -35,7 +35,6 @@ def random_f(message):
 
 @bot.message_handler(commands=['curs'])
 def curs(message):
-    print(f"Ник - {message.from_user.username}")
     args = message.text.split()[1:]
 
     if len(args)!= 1:
@@ -68,7 +67,7 @@ def curs(message):
 
 @bot.message_handler(commands=['weather'])
 def weather(message):
-    print(f"Ник - {message.from_user.username}")
+    print(message)
     args = message.text.split()[1:]
 
     if len(args)!= 1:
@@ -80,31 +79,63 @@ def weather(message):
     bot.send_message(message.chat.id, text)
 
 
-@bot.message_handler(commands=['gpt'])
-def gpt(message):
-    print(f"Ник - {message.from_user.username}")
-    args = message.text.split()[1:]
-    if len(args)!= 1:
-        bot.send_message(message.chat.id, "Использование: /gpt <content>")
-        return
-
-    text = GPTFree(args)
-    bot.send_message(message.chat.id, text)
 
 @bot.message_handler(commands=['wb'])
 def wb(message):
-    print(f"Ник - {message.from_user.username}")
     args = message.text.split()[1:]
-    if len(args)!= 1:
+    if len(args) != 1:
         bot.send_message(message.chat.id, "Использование: /wb <артикул>")
         return
 
-    
+
     text = parse(args[0])
-    if text != "Misuse detected. Please get in touch, we can come up with a solution for your use case.":
-        bot.send_message(message.chat.id, text)
-    else:
+    #print(text)
+    if text is None:
+        print("ERROR(Наверное не правильный артикул)")
+        bot.send_message(message.chat.id, "Неверный артикул. Пожалуйста, проверьте и попробуйте снова.")
+    elif text == "Misuse detected. Please get in touch, we can come up with a solution for your use case.":
         bot.send_message(message.chat.id, "Проблема с запросом. Пожалуйста, попробуйте позже.")
+    else:
+        bot.send_message(message.chat.id, text)
+
+
+@bot.message_handler(commands=['gpt'])
+def gpt(message):
+    args = message.text[5:]
+    #print(args)
+    if len(args) == 0:
+        bot.send_message(message.chat.id, "Использование: /gpt <content>")
+        return
+
+    wait_message = bot.send_message(message.chat.id, "Подождите, пока ChatGPT завершит обработку информации. Это может занять некоторое время в зависимости от сложности запроса и объема данных. После завершения вы получите ответ.\nСпасибо за ваше терпение!")
+
+
+    text = GPTFree(args)
+    #print(text)
+    if text == "Привет! Как я могу помочь тебе сегодня? Если у тебя есть вопросы или нужна информация, просто дай знать!":
+        bot.send_message(message.chat.id, "Проблема с запросом. Пожалуйста, попробуйте позже.")
+    else:
+        bot.send_message(message.chat.id, text)
+    bot.delete_message(message.chat.id, wait_message.message_id)
+    #bot.send_message(message.chat.id, "test")
+    
+    
+    
+
+
+@bot.message_handler(commands=['gpt_img'])
+def gpt_img(message):
+    args = message.text[9:]
+    #print(args)
+    if len(args) == 0:
+        bot.send_message(message.chat.id, "Использование: /gpt_img <content>")
+        return
+
+    img_url = GPTFree_img(args)
+    #print(img_url)
+
+    bot.send_message(message.chat.id, img_url)
+
 
 print("bot start1")
 bot.polling(non_stop=True)

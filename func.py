@@ -72,3 +72,12 @@ def GPTFree(content):
     model="gpt-4o-mini",
     messages=[{"role": "user", "content": {content}}])
     return response.choices[0].message.content
+
+def GPTFree_img(prompt):
+    response = client.images.generate(
+        model="flux",
+        prompt= f"{prompt}",
+        response_format="url"
+    )
+
+    return response.data[0].url
