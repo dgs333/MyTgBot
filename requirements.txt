@@ -1,0 +1,3 @@
+pyTelegramBotAPI
+g4f[all]
+requests
