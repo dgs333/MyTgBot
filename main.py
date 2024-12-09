@@ -118,7 +118,7 @@ def gpt(message):
         bot.send_message(message.chat.id, text)
     bot.delete_message(message.chat.id, wait_message.message_id)
     #bot.send_message(message.chat.id, "test")
-    
+    #testtststtsstststtstdads
     
     
 
